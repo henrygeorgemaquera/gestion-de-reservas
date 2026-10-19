@@ -8,8 +8,9 @@ class UsuarioService:
     def __init__(self, repo: IUsuarioRepository):
         self.repo = repo
 
-    def obtener_todos(self):
-        return self.repo.get_all()
+    def obtener_todos(self, page: int = 1, limit: int = 10):
+        skip = (page - 1) * limit
+        return self.repo.get_all(skip=skip, limit=limit)
 
     def obtener_por_id(self, id: int):
         usuario = self.repo.get_by_id(id)

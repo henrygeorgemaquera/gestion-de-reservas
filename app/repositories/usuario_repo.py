@@ -6,7 +6,7 @@ from app.models.usuario import Usuario
 # (Principio SOLID: Inversión de Dependencias)
 class IUsuarioRepository(ABC):
     @abstractmethod
-    def get_all(self): pass
+    def get_all(self, skip: int = 0, limit: int = 10): pass
     
     @abstractmethod
     def get_by_id(self, id: int): pass
@@ -25,9 +25,9 @@ class UsuarioRepository(IUsuarioRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self):
-
-        return self.db.execute(select(Usuario)).scalars().all()
+    def get_all(self, skip: int = 0, limit: int = 10):
+        statement = select(Usuario).offset(skip).limit(limit)
+        return self.db.execute(statement).scalars().all()
 
     def get_by_id(self, id: int):
         return self.db.get(Usuario, id)

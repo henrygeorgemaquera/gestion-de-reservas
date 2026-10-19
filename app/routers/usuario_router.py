@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.usuario_schema import UsuarioResponse, UsuarioCreate, UsuarioUpdate
@@ -15,8 +15,12 @@ def get_usuario_service(db: Session = Depends(get_db)):
 
 # Los 5 Endpoints exigidos por la Cátedra
 @router.get("", response_model=list[UsuarioResponse])
-def listar_usuarios(service: UsuarioService = Depends(get_usuario_service)):
-    return service.obtener_todos()
+def listar_usuarios(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=100),
+    service: UsuarioService = Depends(get_usuario_service)
+):
+    return service.obtener_todos(page=page, limit=limit)
 
 @router.get("/{id}", response_model=UsuarioResponse)
 def obtener_usuario(id: int, service: UsuarioService = Depends(get_usuario_service)):
